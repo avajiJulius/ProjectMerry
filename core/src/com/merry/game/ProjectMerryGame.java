@@ -49,11 +49,11 @@ public class ProjectMerryGame extends ApplicationAdapter {
 		renderer = new Box2DDebugRenderer();
 
 		hero  = new Hero(atlas, world);
-		heroBody = hero.getHeroBody();
+		heroBody = hero.getBody();
 		heroRegion = hero.getTextureRegion();
 
-		Enemy enemy = new Enemy(atlas, world, false);
-		enemyBody = enemy.getEnemyBody();
+		Enemy enemy = new Enemy(atlas, world);
+		enemyBody = enemy.getBody();
 		enemyRegion = enemy.getTextureRegion();
 
 		Platform platform = new Platform(world, 1000, 32);

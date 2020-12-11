@@ -11,9 +11,9 @@ public class AttackListener implements ContactListener {
 
         if(isValidForContact(fa, fb) && isHostile(fa, fb)) {
             if(fa.getUserData() instanceof Enemy) {
-                ((Enemy) fa.getUserData()).getDamage();
+                System.out.println("Hit");
             } else {
-                ((Enemy) fb.getUserData()).getDamage();
+                System.out.println("Hit2");
             }
         }
     }
