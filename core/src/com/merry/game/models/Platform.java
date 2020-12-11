@@ -2,28 +2,23 @@ package com.merry.game.models;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.merry.game.BodyBuilder;
 
-import static com.merry.game.utils.Constants.PPM;
+import static com.merry.game.utils.Constants.*;
 
-public class Platform extends ObjectBody{
+public class Platform {
 
-    private int width;
-    private int height;
+    private BodyBuilder builder;
 
-    public Platform(World world, Vector2 position, int width, int height) {
-        super(world, position);
-        this.width = width;
-        this.height = height;
+    public Platform(World world, int width, int height) {
+
+        this.builder = new BodyBuilder(world);
+        builder.setBodyDef(new Vector2(0, 0), false);
+        builder.setShapeSize(width, height);
+        builder.setFixtureDef(WALL, HERO, (short) 0);
     }
 
-    public Platform(World world, float x, float y, int width, int height) {
-        super(world, new Vector2(x, y));
-        this.width = width;
-        this.height = height;
-    }
-
-    @Override
-    public void setBoxSize(PolygonShape shape) {
-        shape.setAsBox(width / PPM, height / PPM);
+    public Body getPlatformBody() {
+        return builder.build();
     }
 }

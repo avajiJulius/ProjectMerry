@@ -15,8 +15,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.merry.game.models.Hero;
 import com.merry.game.models.Platform;
 
-
-import static com.merry.game.utils.Constants.PPM;
+import static com.merry.game.utils.Constants.*;
 
 public class ProjectMerryGame extends ApplicationAdapter {
 
@@ -48,12 +47,11 @@ public class ProjectMerryGame extends ApplicationAdapter {
 		world = new World(new Vector2(0f, -10f), false);
 		renderer = new Box2DDebugRenderer();
 
-		hero  = new Hero(world, atlas, 2, 10);
+		hero  = new Hero(atlas, world);
+		heroBody = hero.getHeroBody();
 		region = hero.getTextureRegion();
-		Platform platform = new Platform(world, 0, 0, 32,16);
-		heroBody = hero.createBox(true);
-		platform.createBox(false);
-
+		Platform platform = new Platform(world, 100, 32);
+		platform.getPlatformBody();
 	}
 
 	@Override
@@ -93,7 +91,7 @@ public class ProjectMerryGame extends ApplicationAdapter {
 			horizontalForce -= 1;
 		}
 		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-			heroBody.applyForceToCenter(0, 100, true);
+			heroBody.applyForceToCenter(0, 80, true);
 		}
 
 
