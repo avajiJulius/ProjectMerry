@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.joints.*;
 import com.merry.game.builders.BodyBuilder;
 
 import java.util.concurrent.TimeUnit;
@@ -19,25 +20,45 @@ public class Hero {
 
     private TextureRegion texture;
     private TextureAtlas atlas;
-    private BodyBuilder builder;
-    private Body body;
-
-
-
+    private BodyBuilder bodyBuilder, sensorBuilder;
+    private Body body, sensor;
+    private WeldJointDef jointDef;
 
     public Hero(TextureAtlas atlas, World world) {
-        this.builder = new BodyBuilder(world, this);
-        builder.setBodyDef(new Vector2(2, 10), true);
-        builder.setShapeSize(WIDTH, HEIGHT);
-        builder.setFixtureDef(HERO, (short) (WALL | ENEMY), (short) 0);
+        bodyBuilder = new BodyBuilder(world, this);
+        sensorBuilder = new BodyBuilder(world, this);
+        body = buildBody();
+        sensor = buildSensor();
+        jointDef = new WeldJointDef();
+        join();
+        world.createJoint(jointDef);
         this.atlas = atlas;
         setTextureRegion(walk05);
     }
 
+    private Body buildBody() {
+        bodyBuilder.setBodyDef(new Vector2(2, 10), true);
+        bodyBuilder.setShapeSize(WIDTH, HEIGHT);
+        bodyBuilder.setFixtureDef(HERO, WALL , (short) 0, false);
+        return bodyBuilder.build();
+    }
+    private Body buildSensor() {
+        sensorBuilder.setBodyDef(new Vector2(2, 10), true);
+        sensorBuilder.setShapeSize(WIDTH, HEIGHT);
+        sensorBuilder.setFixtureDef(HERO, ENEMY, (short) 0, true);
+        return sensorBuilder.build();
+    }
+
     public Body getHeroBody() {
-        this.body = builder.build();
         return body;
     }
+
+
+    private void join() {
+        jointDef.bodyA = body;
+        jointDef.bodyB = sensor;
+    }
+
 
     public void evade() {
         new Thread(() -> {
@@ -66,4 +87,8 @@ public class Hero {
     }
 
 
+    public void applyForceToCenter(int forceX, int forceY, boolean isWake) {
+        body.applyForceToCenter(forceX, forceY, isWake);
+        sensor.applyForceToCenter(forceX, forceY, isWake);
+    }
 }

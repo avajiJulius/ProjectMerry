@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.merry.game.builders.BodyBuilder;
 
 import static com.merry.game.utils.Constants.*;
@@ -17,21 +18,46 @@ public class Enemy {
 
     private TextureRegion texture;
     private TextureAtlas atlas;
-    private BodyBuilder builder;
+    private BodyBuilder bodyBuilder, sensorBuilder;
+    private WeldJointDef jointDef;
+    private Body body, sensor;
 
-
-
-    public Enemy(TextureAtlas atlas, World world) {
-        this.builder = new BodyBuilder(world, this);
-        builder.setBodyDef(new Vector2(10, 10), true);
-        builder.setShapeSize(WIDTH, HEIGHT);
-        builder.setFixtureDef(ENEMY, (short) (WALL | HERO), (short) 0);
+    public Enemy(TextureAtlas atlas, World world, boolean isSensor) {
+        bodyBuilder = new BodyBuilder(world, this);
+        sensorBuilder = new BodyBuilder(world, this);
+        jointDef = new WeldJointDef();
+        body = buildBody();
+        sensor = buildSensor();
+        join();
+        world.createJoint(jointDef);
         this.atlas = atlas;
         setTextureRegion(walk05);
     }
 
-    public Body getHeroBody() {
-        return builder.build();
+    public void getDamage() {
+        body.setLinearDamping(3.0f);
+    }
+
+    public Body getEnemyBody() {
+        return body;
+    }
+
+    private Body buildBody() {
+        bodyBuilder.setBodyDef(new Vector2(20, 10), true);
+        bodyBuilder.setShapeSize(WIDTH, HEIGHT);
+        bodyBuilder.setFixtureDef(ENEMY, WALL , (short) 0, false);
+        return bodyBuilder.build();
+    }
+    private Body buildSensor() {
+        sensorBuilder.setBodyDef(new Vector2(20, 10), true);
+        sensorBuilder.setShapeSize(WIDTH, HEIGHT);
+        sensorBuilder.setFixtureDef(ENEMY, HERO, (short) 0, true);
+        return sensorBuilder.build();
+    }
+
+    private void join() {
+        jointDef.bodyA = body;
+        jointDef.bodyB = sensor;
     }
 
     public TextureRegion getTextureRegion() {

@@ -15,7 +15,7 @@ public class Platform {
         this.builder = new BodyBuilder(world, this);
         builder.setBodyDef(new Vector2(0, 0), false);
         builder.setShapeSize(width, height);
-        builder.setFixtureDef(WALL, (short) (HERO | ENEMY), (short) 0);
+        builder.setFixtureDef(WALL, (short) (HERO | ENEMY), (short) 0, false);
     }
 
     public Body getPlatformBody() {

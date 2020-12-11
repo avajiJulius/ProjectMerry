@@ -27,7 +27,7 @@ public class ProjectMerryGame extends ApplicationAdapter {
 
 	private World world;
 	private Body heroBody, enemyBody;
-	private Hero hero;
+	private Hero hero, heroSensor;
 
 	private SpriteBatch batch;
 	private TextureAtlas atlas;
@@ -42,7 +42,6 @@ public class ProjectMerryGame extends ApplicationAdapter {
 		camera.setToOrtho(false, width/SCALE, height/SCALE);
 
 		batch = new SpriteBatch();
-
 		atlas = new TextureAtlas("main.pack");
 
 		world = new World(new Vector2(0f, -10f), false);
@@ -53,8 +52,8 @@ public class ProjectMerryGame extends ApplicationAdapter {
 		heroBody = hero.getHeroBody();
 		heroRegion = hero.getTextureRegion();
 
-		Enemy enemy = new Enemy(atlas, world);
-		enemyBody = enemy.getHeroBody();
+		Enemy enemy = new Enemy(atlas, world, false);
+		enemyBody = enemy.getEnemyBody();
 		enemyRegion = enemy.getTextureRegion();
 
 		Platform platform = new Platform(world, 1000, 32);
@@ -99,7 +98,7 @@ public class ProjectMerryGame extends ApplicationAdapter {
 			horizontalForce -= 1;
 		}
 		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-			heroBody.applyForceToCenter(0, 80, true);
+			hero.applyForceToCenter(0 ,80, true);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
 			hero.evade();

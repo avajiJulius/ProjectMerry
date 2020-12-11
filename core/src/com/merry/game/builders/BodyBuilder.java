@@ -43,9 +43,10 @@ public class BodyBuilder {
         shape.setAsBox(width / PPM, height / PPM);
     }
 
-    public void setFixtureDef(short object, short collisionObject, short groupIndex) {
+    public void setFixtureDef(short object, short collisionObject, short groupIndex, boolean isSensor) {
         this.fixtureDef.shape = shape;
         this.fixtureDef.density = 1.0f;
+        this.fixtureDef.isSensor = isSensor;
         this.fixtureDef.filter.categoryBits = object;
         this.fixtureDef.filter.maskBits = collisionObject;
         this.fixtureDef.filter.groupIndex = groupIndex;

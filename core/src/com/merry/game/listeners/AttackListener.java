@@ -1,6 +1,7 @@
 package com.merry.game.listeners;
 
 import com.badlogic.gdx.physics.box2d.*;
+import com.merry.game.models.Enemy;
 
 public class AttackListener implements ContactListener {
     @Override
@@ -9,7 +10,11 @@ public class AttackListener implements ContactListener {
         Fixture fb = contact.getFixtureB();
 
         if(isValidForContact(fa, fb) && isHostile(fa, fb)) {
-            System.out.println("HIIIIIIIIIIIIIT");
+            if(fa.getUserData() instanceof Enemy) {
+                ((Enemy) fa.getUserData()).getDamage();
+            } else {
+                ((Enemy) fb.getUserData()).getDamage();
+            }
         }
     }
 
