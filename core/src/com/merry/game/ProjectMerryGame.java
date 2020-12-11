@@ -5,13 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+import com.merry.game.listeners.AttackListener;
+import com.merry.game.models.Enemy;
 import com.merry.game.models.Hero;
 import com.merry.game.models.Platform;
 
@@ -25,12 +26,12 @@ public class ProjectMerryGame extends ApplicationAdapter {
 	private Box2DDebugRenderer renderer;
 
 	private World world;
-	private Body heroBody, platformBody;
+	private Body heroBody, enemyBody;
 	private Hero hero;
 
 	private SpriteBatch batch;
 	private TextureAtlas atlas;
-	private TextureRegion region;
+	private TextureRegion heroRegion, enemyRegion;
 
 
 	@Override
@@ -45,12 +46,18 @@ public class ProjectMerryGame extends ApplicationAdapter {
 		atlas = new TextureAtlas("main.pack");
 
 		world = new World(new Vector2(0f, -10f), false);
+		world.setContactListener(new AttackListener());
 		renderer = new Box2DDebugRenderer();
 
 		hero  = new Hero(atlas, world);
 		heroBody = hero.getHeroBody();
-		region = hero.getTextureRegion();
-		Platform platform = new Platform(world, 100, 32);
+		heroRegion = hero.getTextureRegion();
+
+		Enemy enemy = new Enemy(atlas, world);
+		enemyBody = enemy.getHeroBody();
+		enemyRegion = enemy.getTextureRegion();
+
+		Platform platform = new Platform(world, 1000, 32);
 		platform.getPlatformBody();
 	}
 
@@ -63,7 +70,8 @@ public class ProjectMerryGame extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.begin();
-		batch.draw(region , heroBody.getPosition().x * PPM - (region.getRegionWidth() / 1.7f), heroBody.getPosition().y * PPM - (region.getRegionHeight()) / 2.4f);
+		batch.draw(enemyRegion, enemyBody.getPosition().x * PPM - (enemyRegion.getRegionWidth() / 1.7f), enemyBody.getPosition().y * PPM - (enemyRegion.getRegionHeight()) / 2.4f);
+		batch.draw(heroRegion, heroBody.getPosition().x * PPM - (heroRegion.getRegionWidth() / 1.7f), heroBody.getPosition().y * PPM - (heroRegion.getRegionHeight()) / 2.4f);
 		batch.end();
 
 		renderer.render(world, camera.combined.scl(PPM));
@@ -93,7 +101,9 @@ public class ProjectMerryGame extends ApplicationAdapter {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			heroBody.applyForceToCenter(0, 80, true);
 		}
-
+		if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
+			hero.evade();
+		}
 
 		heroBody.setLinearVelocity(horizontalForce * 5, heroBody.getLinearVelocity().y);
 

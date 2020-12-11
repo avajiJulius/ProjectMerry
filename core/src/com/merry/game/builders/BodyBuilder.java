@@ -1,4 +1,4 @@
-package com.merry.game;
+package com.merry.game.builders;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -11,8 +11,10 @@ public class BodyBuilder {
     private BodyDef bodyDef;
     private PolygonShape shape;
     private FixtureDef fixtureDef;
+    private Object objectData;
 
-    public BodyBuilder(World world) {
+    public BodyBuilder(World world, Object objectData) {
+        this.objectData = objectData;
         this.world = world;
         this.bodyDef = new BodyDef();
         this.shape = new PolygonShape();
@@ -21,6 +23,7 @@ public class BodyBuilder {
 
     public Body build() {
         Fixture fixture = world.createBody(bodyDef).createFixture(fixtureDef);
+        fixture.setUserData(objectData);
         shape.dispose();
 
         return fixture.getBody();
